@@ -6,44 +6,51 @@ import br.com.agendaon.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 @Service
 public class ClientService {
-
     @Autowired
     private ClientRepository clientRepository;
 
     @Autowired
     private UserService userService;
 
-    public List<ClientModel> findAll() {
-        return clientRepository.findAll();
+    public List<ClientPresenter> findAll() {
+        List<ClientModel> clients = this.clientRepository.findAll();
+        List<ClientPresenter> result = new ArrayList<>();
+        clients.forEach(client -> result.add(new ClientPresenter(client)));
+        return result;
     }
 
-    public ClientModel me(UUID userId) {
-        return clientRepository.findByUserId(userId).orElse(null);
+    public ClientPresenter me(UUID userId) {
+        ClientModel client = this.clientRepository.findByUserId(userId).orElse(null);
+        if (client == null) return null;
+        return new ClientPresenter(client);
     }
 
-    public ClientModel create(ClientDTO clientDTO, UUID userId) {
+    public ClientPresenter create(ClientDTO clientDTO, UUID userId) {
         try {
             UserModel user = this.userService.findById(userId);
             ClientModel clientModel = new ClientModel();
             clientModel.setDatabase(clientDTO);
             clientModel.setUser(user);
-            return this.clientRepository.save(clientModel);
+            ClientModel client = this.clientRepository.save(clientModel);
+            return new ClientPresenter(client);
         } catch (Exception error) {
             System.out.println("Error create user " + error.getMessage());
             return null;
         }
     }
 
-    public ClientModel update(ClientDTO clientDTO, UUID clientId) {
+    public ClientPresenter update(ClientDTO clientDTO, UUID clientId) {
         try {
             ClientModel client = this.clientRepository.findById(clientId).orElseThrow(() -> null);
             Utils.copyNonNullProperties(clientDTO, client);
-            return this.clientRepository.save(client);
+            this.clientRepository.save(client);
+            return this.me(clientId);
         } catch (Exception error) {
             System.out.println("Error update user " + error.getMessage());
             return null;
@@ -53,7 +60,7 @@ public class ClientService {
 
     public Boolean delete(UUID id) {
         try {
-            clientRepository.deleteById(id);
+            this.clientRepository.deleteById(id);
             return true;
         } catch (Exception error) {
             System.out.println("Error delete user " + error.getMessage());
