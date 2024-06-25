@@ -7,10 +7,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
 class AgendaonApplicationTests {
-
     @Test
     void contextLoads() {
         assertTrue(true);
     }
-
 }
