@@ -17,14 +17,14 @@ public class ClientController {
     private ClientService clientService;
 
     @GetMapping("/")
-    public ResponseEntity<List<ClientModel>> findAll() {
-        List<ClientModel> clients = this.clientService.findAll();
+    public ResponseEntity<List<ClientPresenter>> findAll() {
+        List<ClientPresenter> clients = this.clientService.findAll();
         return ResponseEntity.status(HttpStatus.OK).body(clients);
     }
 
     @GetMapping("/me")
-    public ResponseEntity<ClientModel> me(HttpServletRequest request) {
-        ClientModel me = this.clientService.me(this.getUserId(request));
+    public ResponseEntity<ClientPresenter> me(HttpServletRequest request) {
+        ClientPresenter me = this.clientService.me(this.getUserId(request));
         if (me == null) {
             return ResponseEntity.notFound().build();
         }
@@ -32,8 +32,8 @@ public class ClientController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<ClientModel> create(@RequestBody ClientDTO clientDTO, HttpServletRequest request) {
-        ClientModel client = this.clientService.create(clientDTO, this.getUserId(request));
+    public ResponseEntity<ClientPresenter> create(@RequestBody ClientDTO clientDTO, HttpServletRequest request) {
+        ClientPresenter client = this.clientService.create(clientDTO, this.getUserId(request));
         if (client == null) {
             return ResponseEntity.badRequest().build();
         }
@@ -41,8 +41,8 @@ public class ClientController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ClientModel> update(@RequestBody ClientDTO clientDTO, @PathVariable UUID id) {
-        ClientModel client = this.clientService.update(clientDTO, id);
+    public ResponseEntity<ClientPresenter> update(@RequestBody ClientDTO clientDTO, @PathVariable UUID id) {
+        ClientPresenter client = this.clientService.update(clientDTO, id);
         if (client == null) {
             return ResponseEntity.notFound().build();
         }
@@ -51,11 +51,11 @@ public class ClientController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> delete(@PathVariable UUID id) {
-        Boolean isDeleted = clientService.delete(id);
+        Boolean isDeleted = this.clientService.delete(id);
         if (!isDeleted) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.status(HttpStatus.OK).body(null);
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     private UUID getUserId(HttpServletRequest request) {
