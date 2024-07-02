@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Base64;
 
 @Component
@@ -25,7 +26,7 @@ public class UserMiddleware extends OncePerRequestFilter {
     protected void doFilterInternal(@org.jetbrains.annotations.NotNull HttpServletRequest request, @NotNull HttpServletResponse response, @NotNull FilterChain filterChain)
             throws ServletException, IOException {
 
-        if (request.getServletPath().startsWith("/test")) {
+        if (this.isOpenUrl(request.getRequestURI())) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -45,6 +46,20 @@ public class UserMiddleware extends OncePerRequestFilter {
         }
 
         request.setAttribute("userId", user.getId());
+        request.setAttribute("email", user.getEmail());
         filterChain.doFilter(request, response);
+    }
+
+    protected Boolean isOpenUrl(String url) {
+        ArrayList<String> routes = this.openRoutes();
+        return routes.contains(url);
+    }
+
+    protected ArrayList<String> openRoutes() {
+        ArrayList<String> routes = new ArrayList<>();
+        routes.add("/login");
+        routes.add("/register");
+        routes.add("/logout");
+        return routes;
     }
 }

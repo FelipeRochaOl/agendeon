@@ -39,7 +39,10 @@ public class ClientModel {
     @SoftDelete
     private boolean deleted;
 
-    public void setDatabase(ClientDTO clientDTO) {
+    public ClientModel() {
+    }
+
+    public ClientModel(ClientDTO clientDTO) {
         this.setName(clientDTO.getName());
         this.setCpf(clientDTO.getCpf());
         this.setAge(clientDTO.getAge());

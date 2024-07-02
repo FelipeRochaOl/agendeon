@@ -29,6 +29,11 @@ public class UserService {
         return this.userRepository.findByEmail(email);
     }
 
+    public UserPresenter profile(String email) {
+        UserModel user = this.findByEmail(email);
+        return new UserPresenter(user);
+    }
+
     public UserModel findById(UUID id) {
         return this.userRepository.findById(id).orElseThrow(() -> null);
     }

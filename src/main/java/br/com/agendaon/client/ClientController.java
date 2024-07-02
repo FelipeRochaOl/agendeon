@@ -1,5 +1,6 @@
 package br.com.agendaon.client;
 
+import br.com.agendaon.response.ResponsePresenter;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,40 +23,45 @@ public class ClientController {
         return ResponseEntity.status(HttpStatus.OK).body(clients);
     }
 
-    @GetMapping("/me")
-    public ResponseEntity<ClientPresenter> me(HttpServletRequest request) {
-        ClientPresenter me = this.clientService.me(this.getUserId(request));
-        if (me == null) {
+    @GetMapping("/profile")
+    public ResponseEntity<ResponsePresenter<ClientPresenter>> me(HttpServletRequest request) {
+        try {
+            ClientPresenter me = this.clientService.me(this.getUserId(request));
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponsePresenter<>(true, me));
+        } catch (Exception e) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.status(HttpStatus.OK).body(me);
     }
 
     @PostMapping("/")
-    public ResponseEntity<ClientPresenter> create(@RequestBody ClientDTO clientDTO, HttpServletRequest request) {
-        ClientPresenter client = this.clientService.create(clientDTO, this.getUserId(request));
-        if (client == null) {
-            return ResponseEntity.badRequest().build();
+    public ResponseEntity<ResponsePresenter<ClientPresenter>> create(@RequestBody ClientDTO clientDTO, HttpServletRequest request) {
+        try {
+            clientDTO.setUserId(this.getUserId(request));
+            ClientPresenter client = this.clientService.create(clientDTO);
+            return ResponseEntity.status(HttpStatus.CREATED).body(new ResponsePresenter<>(true, client));
+        } catch (Exception error) {
+            return ResponseEntity.badRequest().body(new ResponsePresenter<>(error.getMessage()));
         }
-        return ResponseEntity.status(HttpStatus.CREATED).body(client);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ClientPresenter> update(@RequestBody ClientDTO clientDTO, @PathVariable UUID id) {
-        ClientPresenter client = this.clientService.update(clientDTO, id);
-        if (client == null) {
-            return ResponseEntity.notFound().build();
+    public ResponseEntity<ResponsePresenter<ClientPresenter>> update(@RequestBody ClientDTO clientDTO, @PathVariable UUID id) {
+        try {
+            clientDTO.setUserId(id);
+            ClientPresenter client = this.clientService.update(clientDTO);
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponsePresenter<>(true, client));
+        } catch (Exception error) {
+            return ResponseEntity.badRequest().body(new ResponsePresenter<>(error.getMessage()));
         }
-        return ResponseEntity.status(HttpStatus.OK).body(client);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> delete(@PathVariable UUID id) {
+    public ResponseEntity<ResponsePresenter<String>> delete(@PathVariable UUID id) {
         Boolean isDeleted = this.clientService.delete(id);
         if (!isDeleted) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.status(HttpStatus.OK).build();
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponsePresenter<>(true));
     }
 
     private UUID getUserId(HttpServletRequest request) {

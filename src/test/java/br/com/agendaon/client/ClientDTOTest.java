@@ -1,12 +1,12 @@
-package br.com.agendaon.unit.client;
+package br.com.agendaon.client;
 
-import br.com.agendaon.client.ClientDTO;
+
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-class ClientDTOTest {
+public class ClientDTOTest {
     @Test
     public void testCreateClient() {
         ClientDTO clientDTO = new ClientDTO();
