@@ -18,6 +18,7 @@ public class UserService {
         List<UserPresenter> usersPresenter = new ArrayList<>();
         for (UserModel user : users) {
             UserPresenter userPresenter = new UserPresenter();
+            userPresenter.setId(user.getId());
             userPresenter.setEmail(user.getEmail());
             userPresenter.setCreatedAt(user.getCreatedAt());
             usersPresenter.add(userPresenter);

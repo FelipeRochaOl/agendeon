@@ -32,12 +32,16 @@ public class UserMiddleware extends OncePerRequestFilter {
         }
 
         String authorization = request.getHeader("Authorization");
-        String authEncode = authorization.substring("Basic".length()).trim();
-        byte[] authDecode = Base64.getDecoder().decode(authEncode);
-        String auth = new String(authDecode);
-        String[] credentials = auth.split(":");
-        String email = credentials[0];
-        String password = credentials[1];
+        String email = "";
+        String password = "";
+        if (authorization != null) {
+            String authEncode = authorization.substring("Basic".length()).trim();
+            byte[] authDecode = Base64.getDecoder().decode(authEncode);
+            String auth = new String(authDecode);
+            String[] credentials = auth.split(":");
+            email = credentials[0];
+            password = credentials[1];
+        }
 
         UserModel user = userService.findByEmail(email);
         if (user == null || !this.userService.isValidatePassword(password, user.getPassword())) {
@@ -60,6 +64,7 @@ public class UserMiddleware extends OncePerRequestFilter {
         routes.add("/login");
         routes.add("/register");
         routes.add("/logout");
+        routes.add("/");
         return routes;
     }
 }

@@ -42,7 +42,7 @@ public class ClientService {
     }
 
     public ClientPresenter update(ClientDTO clientDTO) {
-        ClientModel client = this.clientRepository.findById(clientDTO.getUserId()).orElseThrow(() -> null);
+        ClientModel client = this.clientRepository.findByUserId(clientDTO.getUserId()).orElseThrow(() -> null);
         Utils.copyNonNullProperties(clientDTO, client);
         this.clientRepository.save(client);
         return this.me(clientDTO.getUserId());

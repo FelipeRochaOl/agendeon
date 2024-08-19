@@ -18,9 +18,10 @@ public class ClientController {
     private ClientService clientService;
 
     @GetMapping("/")
-    public ResponseEntity<List<ClientPresenter>> findAll() {
+    public ResponseEntity<ResponsePresenter<List<ClientPresenter>>> findAll() {
         List<ClientPresenter> clients = this.clientService.findAll();
-        return ResponseEntity.status(HttpStatus.OK).body(clients);
+        ResponsePresenter<List<ClientPresenter>> response = new ResponsePresenter<>(true, clients);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @GetMapping("/profile")
@@ -38,18 +39,19 @@ public class ClientController {
         try {
             clientDTO.setUserId(this.getUserId(request));
             ClientPresenter client = this.clientService.create(clientDTO);
-            return ResponseEntity.status(HttpStatus.CREATED).body(new ResponsePresenter<>(true, client));
+            ResponsePresenter<ClientPresenter> response = new ResponsePresenter<>(true, client);
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
         } catch (Exception error) {
             return ResponseEntity.badRequest().body(new ResponsePresenter<>(error.getMessage()));
         }
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<ResponsePresenter<ClientPresenter>> update(@RequestBody ClientDTO clientDTO, @PathVariable UUID id) {
+    @PutMapping("/")
+    public ResponseEntity<ResponsePresenter<ClientPresenter>> update(@RequestBody ClientDTO clientDTO) {
         try {
-            clientDTO.setUserId(id);
             ClientPresenter client = this.clientService.update(clientDTO);
-            return ResponseEntity.status(HttpStatus.OK).body(new ResponsePresenter<>(true, client));
+            ResponsePresenter<ClientPresenter> response = new ResponsePresenter<>(true, client);
+            return ResponseEntity.ok(response);
         } catch (Exception error) {
             return ResponseEntity.badRequest().body(new ResponsePresenter<>(error.getMessage()));
         }
@@ -57,11 +59,13 @@ public class ClientController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<ResponsePresenter<String>> delete(@PathVariable UUID id) {
-        Boolean isDeleted = this.clientService.delete(id);
-        if (!isDeleted) {
-            return ResponseEntity.notFound().build();
+        Boolean deleted = this.clientService.delete(id);
+        if (!deleted) {
+            ResponsePresenter<String> response = new ResponsePresenter<>(false);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         }
-        return ResponseEntity.status(HttpStatus.OK).body(new ResponsePresenter<>(true));
+
+        return ResponseEntity.ok(new ResponsePresenter<>(true));
     }
 
     private UUID getUserId(HttpServletRequest request) {
