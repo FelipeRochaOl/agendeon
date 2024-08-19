@@ -36,7 +36,7 @@ public class AddressService {
         if (addressDTO.getZip() != null) addressDTO.validZip();
         Utils.copyNonNullProperties(addressDTO, address);
         this.addressRepository.save(address);
-        return this.findById(addressDTO.getId());
+        return this.findById(id);
     }
 
     public Boolean delete(UUID id) {
