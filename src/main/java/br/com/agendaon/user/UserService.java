@@ -18,6 +18,7 @@ public class UserService {
         List<UserPresenter> usersPresenter = new ArrayList<>();
         for (UserModel user : users) {
             UserPresenter userPresenter = new UserPresenter();
+            userPresenter.setId(user.getId());
             userPresenter.setEmail(user.getEmail());
             userPresenter.setCreatedAt(user.getCreatedAt());
             usersPresenter.add(userPresenter);
@@ -27,6 +28,11 @@ public class UserService {
 
     public UserModel findByEmail(String email) {
         return this.userRepository.findByEmail(email);
+    }
+
+    public UserPresenter profile(String email) {
+        UserModel user = this.findByEmail(email);
+        return new UserPresenter(user);
     }
 
     public UserModel findById(UUID id) {

@@ -54,7 +54,8 @@ public class ServiceService {
 
     public Boolean delete(UUID code) {
         try {
-            this.serviceRepository.deleteByCode(code);
+            ServiceModel service = this.serviceRepository.findByCode(code).orElseThrow(() -> null);
+            this.serviceRepository.delete(service);
             return true;
         } catch (Exception error) {
             System.out.println("Error delete service " + error.getMessage());

@@ -1,5 +1,6 @@
 package br.com.agendaon.user;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,14 @@ public class UserController {
     @GetMapping("/")
     public ResponseEntity<List<UserPresenter>> findAll() {
         return ResponseEntity.ok(this.userService.findAll());
+    }
+
+    @GetMapping("/profile")
+    public ResponseEntity<UserPresenter> findByEmail(HttpServletRequest request) {
+        String email = request.getAttribute("email").toString();
+        UserPresenter profile = this.userService.profile(email);
+        if (profile == null) return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(profile);
     }
 
     @PostMapping("/")
