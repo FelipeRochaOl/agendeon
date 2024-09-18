@@ -4,7 +4,6 @@ import br.com.agendaon.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -19,6 +18,10 @@ public class SessionService {
         List<SessionPresenter> result = new ArrayList<>();
         sessions.forEach(session -> result.add(new SessionPresenter(session)));
         return result;
+    }
+
+    public SessionModel findById(UUID code) {
+        return this.sessionRepository.findByCode(code).orElse(null);
     }
 
     public SessionPresenter findByCode(UUID code) {
