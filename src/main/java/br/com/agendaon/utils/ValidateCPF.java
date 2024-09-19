@@ -6,10 +6,6 @@ import java.util.Map;
 public class ValidateCPF {
     private final String cpf;
 
-    public ValidateCPF() {
-        this.cpf = "";
-    }
-
     public ValidateCPF(String cpf) {
         this.cpf = this.getOnlyNumbers(cpf);
     }

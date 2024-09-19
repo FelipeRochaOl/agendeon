@@ -54,7 +54,7 @@ public class ClientService {
             this.clientRepository.deleteById(id);
             return true;
         } catch (Exception error) {
-            System.out.println("Error delete user " + error.getMessage());
+            System.out.println("Error delete client " + error.getMessage());
             return false;
         }
     }
