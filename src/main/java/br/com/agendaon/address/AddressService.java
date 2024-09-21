@@ -20,8 +20,12 @@ public class AddressService {
         return result;
     }
 
+    public AddressModel findOne(UUID id) {
+        return this.addressRepository.findById(id).orElseThrow(() -> null);
+    }
+
     public AddressPresenter findById(UUID id) {
-        AddressModel address = this.addressRepository.findById(id).orElseThrow(() -> null);
+        AddressModel address = this.findOne(id);
         return new AddressPresenter(address);
     }
 

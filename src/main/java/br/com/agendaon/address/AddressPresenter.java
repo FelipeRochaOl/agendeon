@@ -17,7 +17,7 @@ public class AddressPresenter {
     private String country;
     private String zip;
 
-    AddressPresenter(AddressModel addressModel) {
+    public AddressPresenter(AddressModel addressModel) {
         this.id = addressModel.getId();
         this.street = addressModel.getStreet();
         this.number = addressModel.getHouseNumber();
