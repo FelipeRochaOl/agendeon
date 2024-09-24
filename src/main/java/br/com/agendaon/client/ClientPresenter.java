@@ -13,7 +13,7 @@ public class ClientPresenter {
     private Number age;
     private UserPresenter user;
 
-    ClientPresenter(ClientModel clientModel) {
+    public ClientPresenter(ClientModel clientModel) {
         this.id = clientModel.getId();
         this.name = clientModel.getName();
         this.age = clientModel.getAge();

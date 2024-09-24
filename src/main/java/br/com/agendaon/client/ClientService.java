@@ -26,6 +26,14 @@ public class ClientService {
         return result;
     }
 
+    public ClientModel findOne(UUID id) {
+        return this.clientRepository.findById(id).orElse(null);
+    }
+
+    public ClientModel findByUserId(UUID userId) {
+        return this.clientRepository.findByUserId(userId).orElse(null);
+    }
+
     public ClientPresenter me(UUID userId) {
         ClientModel client = this.clientRepository.findByUserId(userId).orElseThrow(() -> null);
         return new ClientPresenter(client);

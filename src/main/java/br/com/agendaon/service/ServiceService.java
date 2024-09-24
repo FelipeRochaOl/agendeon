@@ -20,6 +20,10 @@ public class ServiceService {
         return result;
     }
 
+    public ServiceModel findOne(UUID code) {
+        return this.serviceRepository.findByCode(code).orElse(null);
+    }
+
     public ServicePresenter findByCode(UUID code) {
         ServiceModel service = this.serviceRepository.findByCode(code).orElse(null);
         if (service == null) return null;

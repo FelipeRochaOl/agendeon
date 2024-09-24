@@ -1,5 +1,6 @@
 package br.com.agendaon.service;
 
+import br.com.agendaon.company.CompanyModel;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -21,4 +22,7 @@ public class ServiceModel {
 
     @Column()
     private Number duration;
+
+    @ManyToOne(cascade = CascadeType.PERSIST, optional = false)
+    private CompanyModel company;
 }

@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -26,12 +27,11 @@ public class UserService {
         return usersPresenter;
     }
 
-    public UserModel findByEmail(String email) {
-        return this.userRepository.findByEmail(email);
+    public UserModel getByEmail(String email) {
+        return this.userRepository.getByEmail(email);
     }
 
-    public UserPresenter profile(String email) {
-        UserModel user = this.findByEmail(email);
+    public UserPresenter profile(UserModel user) {
         return new UserPresenter(user);
     }
 
@@ -40,8 +40,8 @@ public class UserService {
     }
 
     public UserPresenter createUser(UserDTO user) throws Exception {
-        UserModel searchUser = this.userRepository.findByEmail(user.getEmail());
-        if (searchUser != null) {
+        Optional<UserModel> searchUser = this.userRepository.findByEmail(user.getEmail());
+        if (!searchUser.isEmpty()) {
             throw new Exception("User already exists");
         }
         String encodedPassword = this.encryptPassword(user.getPassword());
@@ -53,11 +53,6 @@ public class UserService {
         UserPresenter userPresenter = new UserPresenter();
         userPresenter.setEmail(newUser.getEmail());
         return userPresenter;
-    }
-
-    public boolean isValidatePassword(String password, String hashPassword) {
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-        return encoder.matches(password, hashPassword);
     }
 
     private String encryptPassword(String password) {

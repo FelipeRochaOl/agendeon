@@ -1,6 +1,5 @@
 package br.com.agendaon.user;
 
-import br.com.agendaon.utils.DateFormatter;
 import lombok.Data;
 import lombok.Setter;
 
@@ -21,9 +20,5 @@ public class UserPresenter {
         this.id = userModel.getId();
         this.email = userModel.getEmail();
         this.createdAt = userModel.getCreatedAt();
-    }
-
-    public String getCreatedAt() {
-        return new DateFormatter().formatterDateWithTime(createdAt);
     }
 }

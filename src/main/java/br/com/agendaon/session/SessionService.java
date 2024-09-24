@@ -24,6 +24,10 @@ public class SessionService {
         return this.sessionRepository.findByCode(code).orElse(null);
     }
 
+    public List<SessionModel> findByName(String name) {
+        return this.sessionRepository.findByName(name);
+    }
+
     public SessionPresenter findByCode(UUID code) {
         SessionModel session = this.sessionRepository.findByCode(code).orElse(null);
         if (session == null) return null;
