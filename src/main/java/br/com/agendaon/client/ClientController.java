@@ -1,6 +1,7 @@
 package br.com.agendaon.client;
 
 import br.com.agendaon.response.ResponsePresenter;
+import br.com.agendaon.user.UserModel;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -27,7 +28,8 @@ public class ClientController {
     @GetMapping("/profile")
     public ResponseEntity<ResponsePresenter<ClientPresenter>> me(HttpServletRequest request) {
         try {
-            ClientPresenter me = this.clientService.me(this.getUserId(request));
+            UserModel user = (UserModel) request.getAttribute("user");
+            ClientPresenter me = this.clientService.me(user.getId());
             return ResponseEntity.status(HttpStatus.OK).body(new ResponsePresenter<>(true, me));
         } catch (Exception e) {
             return ResponseEntity.notFound().build();
@@ -37,7 +39,8 @@ public class ClientController {
     @PostMapping("/")
     public ResponseEntity<ResponsePresenter<ClientPresenter>> create(@RequestBody ClientDTO clientDTO, HttpServletRequest request) {
         try {
-            clientDTO.setUserId(this.getUserId(request));
+            UserModel user = (UserModel) request.getAttribute("user");
+            clientDTO.setUserId(user.getId());
             ClientPresenter client = this.clientService.create(clientDTO);
             ResponsePresenter<ClientPresenter> response = new ResponsePresenter<>(true, client);
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
@@ -66,9 +69,5 @@ public class ClientController {
         }
 
         return ResponseEntity.ok(new ResponsePresenter<>(true));
-    }
-
-    private UUID getUserId(HttpServletRequest request) {
-        return UUID.fromString(request.getAttribute("userId").toString());
     }
 }

@@ -1,6 +1,9 @@
 package br.com.agendaon.company;
 
 import br.com.agendaon.address.AddressModel;
+import br.com.agendaon.category.CategoryModel;
+import br.com.agendaon.session.SessionModel;
+import br.com.agendaon.user.UserModel;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
@@ -28,8 +31,19 @@ public class CompanyModel {
     private String tradeName;
 
     @OneToOne(cascade = CascadeType.PERSIST)
+    private UserModel user;
+
+    @OneToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(nullable = false)
     private AddressModel address;
+
+    @OneToOne(cascade = CascadeType.PERSIST)
+    @JoinColumn(nullable = false)
+    private SessionModel session;
+
+    @OneToOne(cascade = CascadeType.PERSIST)
+    @JoinColumn(nullable = false)
+    private CategoryModel category;
 
     @CreationTimestamp
     private LocalDateTime createdAt;

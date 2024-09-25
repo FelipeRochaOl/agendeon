@@ -10,4 +10,5 @@ public class ServiceDTO {
     private String description;
     private Double value;
     private Number duration;
+    private UUID companyId;
 }

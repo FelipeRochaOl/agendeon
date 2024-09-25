@@ -11,7 +11,7 @@ public class ServicePresenter {
     private Double value;
     private Number duration;
 
-    ServicePresenter(ServiceModel serviceModel) {
+    public ServicePresenter(ServiceModel serviceModel) {
         this.code = serviceModel.getCode();
         this.description = serviceModel.getDescription();
         this.value = serviceModel.getValue();

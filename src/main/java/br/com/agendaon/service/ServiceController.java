@@ -1,5 +1,6 @@
 package br.com.agendaon.service;
 
+import br.com.agendaon.response.ResponsePresenter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,35 +17,42 @@ public class ServiceController {
     private ServiceService serviceService;
 
     @GetMapping("/")
-    public ResponseEntity<List<ServicePresenter>> findAll() {
+    public ResponseEntity<ResponsePresenter<List<ServicePresenter>>> findAll() {
         List<ServicePresenter> services = this.serviceService.findAll();
-        return ResponseEntity.status(HttpStatus.OK).body(services);
+        ResponsePresenter<List<ServicePresenter>> response = new ResponsePresenter<>(true, services);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @PostMapping("/")
-    public ResponseEntity<ServicePresenter> create(@RequestBody ServiceDTO serviceDTO) {
+    public ResponseEntity<ResponsePresenter<ServicePresenter>> create(@RequestBody ServiceDTO serviceDTO) {
         ServicePresenter service = this.serviceService.create(serviceDTO);
         if (service == null) {
-            return ResponseEntity.badRequest().build();
+            ResponsePresenter<ServicePresenter> response = new ResponsePresenter<>(false, null);
+            return ResponseEntity.badRequest().body(response);
         }
-        return ResponseEntity.status(HttpStatus.CREATED).body(service);
+        ResponsePresenter<ServicePresenter> response = new ResponsePresenter<>(true, service);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @PutMapping("/{code}")
-    public ResponseEntity<ServicePresenter> update(@RequestBody ServiceDTO serviceDTO, @PathVariable UUID code) {
+    public ResponseEntity<ResponsePresenter<ServicePresenter>> update(@RequestBody ServiceDTO serviceDTO, @PathVariable UUID code) {
         ServicePresenter service = this.serviceService.update(serviceDTO, code);
         if (service == null) {
-            return ResponseEntity.notFound().build();
+            ResponsePresenter<ServicePresenter> response = new ResponsePresenter<>(false, null);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         }
-        return ResponseEntity.status(HttpStatus.OK).body(service);
+        ResponsePresenter<ServicePresenter> response = new ResponsePresenter<>(true, service);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @DeleteMapping("/{code}")
-    public ResponseEntity<String> delete(@PathVariable UUID code) {
+    public ResponseEntity<ResponsePresenter> delete(@PathVariable UUID code) {
         Boolean isDeleted = this.serviceService.delete(code);
         if (!isDeleted) {
-            return ResponseEntity.notFound().build();
+            ResponsePresenter<ServicePresenter> response = new ResponsePresenter<>(false);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         }
-        return ResponseEntity.status(HttpStatus.OK).build();
+        ResponsePresenter<ServicePresenter> response = new ResponsePresenter<>(true);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 }

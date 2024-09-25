@@ -1,5 +1,6 @@
 package br.com.agendaon.category;
 
+import br.com.agendaon.response.ResponsePresenter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,35 +17,42 @@ public class CategoryController {
     private CategoryService categoryService;
 
     @GetMapping("/")
-    public ResponseEntity<List<CategoryPresenter>> findAll() {
+    public ResponseEntity<ResponsePresenter<List<CategoryPresenter>>> findAll() {
         List<CategoryPresenter> categories = this.categoryService.findAll();
-        return ResponseEntity.status(HttpStatus.OK).body(categories);
+        ResponsePresenter<List<CategoryPresenter>> response = new ResponsePresenter<>(true, categories);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @PostMapping("/")
-    public ResponseEntity<CategoryPresenter> create(@RequestBody CategoryDTO categoryDTO) {
+    public ResponseEntity<ResponsePresenter<CategoryPresenter>> create(@RequestBody CategoryDTO categoryDTO) {
         CategoryPresenter category = this.categoryService.create(categoryDTO);
         if (category == null) {
-            return ResponseEntity.badRequest().build();
+            ResponsePresenter<CategoryPresenter> response = new ResponsePresenter<>(false);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         }
-        return ResponseEntity.status(HttpStatus.CREATED).body(category);
+        ResponsePresenter<CategoryPresenter> response = new ResponsePresenter<>(true, category);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @PutMapping("/{code}")
-    public ResponseEntity<CategoryPresenter> update(@RequestBody CategoryDTO categoryDTO, @PathVariable UUID code) {
+    public ResponseEntity<ResponsePresenter<CategoryPresenter>> update(@RequestBody CategoryDTO categoryDTO, @PathVariable UUID code) {
         CategoryPresenter category = this.categoryService.update(categoryDTO, code);
         if (category == null) {
-            return ResponseEntity.notFound().build();
+            ResponsePresenter<CategoryPresenter> response = new ResponsePresenter<>(false);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         }
-        return ResponseEntity.status(HttpStatus.OK).body(category);
+        ResponsePresenter<CategoryPresenter> response = new ResponsePresenter<>(true, category);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @DeleteMapping("/{code}")
-    public ResponseEntity<String> delete(@PathVariable UUID code) {
+    public ResponseEntity<ResponsePresenter> delete(@PathVariable UUID code) {
         Boolean isDeleted = this.categoryService.delete(code);
         if (!isDeleted) {
-            return ResponseEntity.notFound().build();
+            ResponsePresenter response = new ResponsePresenter<>(false);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         }
-        return ResponseEntity.status(HttpStatus.OK).build();
+        ResponsePresenter response = new ResponsePresenter<>(true);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 }
