@@ -23,6 +23,11 @@ public class SessionController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
+    @GetMapping("/list")
+    public ResponseEntity<ResponsePresenter<List<SessionPresenter>>> list() {
+        return this.findAll();
+    }
+
     @PostMapping("/")
     public ResponseEntity<ResponsePresenter<SessionPresenter>> create(@RequestBody SessionDTO sessionDTO) {
         SessionPresenter session = this.sessionService.create(sessionDTO);

@@ -1,5 +1,7 @@
 package br.com.agendaon.service;
 
+import br.com.agendaon.company.CompanyModel;
+import br.com.agendaon.company.CompanyService;
 import br.com.agendaon.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,8 +15,11 @@ public class ServiceService {
     @Autowired
     private ServiceRepository serviceRepository;
 
-    public List<ServicePresenter> findAll() {
-        List<ServiceModel> services = this.serviceRepository.findAll();
+    @Autowired
+    private CompanyService companyService;
+
+    public List<ServicePresenter> findAll(UUID companyId) {
+        List<ServiceModel> services = this.serviceRepository.findByCompanyId(companyId);
         List<ServicePresenter> result = new ArrayList<>();
         services.forEach(service -> result.add(new ServicePresenter(service)));
         return result;
@@ -22,6 +27,10 @@ public class ServiceService {
 
     public ServiceModel findOne(UUID code) {
         return this.serviceRepository.findByCode(code).orElse(null);
+    }
+
+    public List<ServiceModel> findByCompanyId(UUID companyId) {
+        return this.serviceRepository.findByCompanyId(companyId);
     }
 
     public ServicePresenter findByCode(UUID code) {
@@ -36,6 +45,8 @@ public class ServiceService {
             serviceModel.setDescription(serviceDTO.getDescription());
             serviceModel.setValue(serviceDTO.getValue());
             serviceModel.setDuration(serviceDTO.getDuration());
+            CompanyModel companyModel = this.companyService.findOne(serviceDTO.getCompanyId());
+            serviceModel.setCompany(companyModel);
             ServiceModel service = this.serviceRepository.save(serviceModel);
             return new ServicePresenter(service);
         } catch (Exception error) {

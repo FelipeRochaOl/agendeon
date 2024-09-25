@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -30,6 +31,10 @@ public class AddressService {
     }
 
     public AddressPresenter create(AddressDTO addressDTO) {
+        Optional<AddressModel> addressSearch = this.addressRepository.findByZip(addressDTO.getZip());
+        if (addressSearch.isPresent()) {
+            return new AddressPresenter(addressSearch.get());
+        }
         AddressModel addressModel = new AddressModel(addressDTO);
         AddressModel address = this.addressRepository.save(addressModel);
         return new AddressPresenter(address);

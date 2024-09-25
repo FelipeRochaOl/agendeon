@@ -25,6 +25,10 @@ public class CategoryService {
         return result;
     }
 
+    public CategoryModel findOne(UUID id) {
+        return this.categoryRepository.findByCode(id).orElse(null);
+    }
+
     public CategoryPresenter findByCode(UUID code) {
         CategoryModel category = this.categoryRepository.findByCode(code).orElse(null);
         if (category == null) return null;

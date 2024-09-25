@@ -10,6 +10,7 @@ import java.util.UUID;
 public class UserPresenter {
     private UUID id;
     private String email;
+    private Boolean isBusiness;
     @Setter
     public LocalDateTime createdAt;
 
