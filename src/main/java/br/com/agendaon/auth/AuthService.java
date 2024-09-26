@@ -35,8 +35,4 @@ public class AuthService {
         long now = System.currentTimeMillis();
         return now + expirationTime;
     }
-
-    public void logout(String token) {
-        this.authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(token, null));
-    }
 }

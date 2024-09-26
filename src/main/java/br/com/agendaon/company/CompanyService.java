@@ -2,6 +2,10 @@ package br.com.agendaon.company;
 
 import br.com.agendaon.address.AddressModel;
 import br.com.agendaon.address.AddressService;
+import br.com.agendaon.category.CategoryModel;
+import br.com.agendaon.category.CategoryService;
+import br.com.agendaon.session.SessionModel;
+import br.com.agendaon.session.SessionService;
 import br.com.agendaon.user.UserModel;
 import br.com.agendaon.user.UserService;
 import br.com.agendaon.utils.Utils;
@@ -11,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -24,12 +29,24 @@ public class CompanyService {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private SessionService sessionService;
+
+    @Autowired
+    private CategoryService categoryService;
+
 
     public List<CompanyPresenter> findAll() {
         List<CompanyModel> companies = this.companyRepository.findAll();
         List<CompanyPresenter> result = new ArrayList<>();
         companies.forEach(company -> result.add(new CompanyPresenter(company)));
         return result;
+    }
+
+    public CompanyPresenter findOneByUser(UUID userId) {
+        Optional<CompanyModel> company = this.companyRepository.findByUserId(userId);
+        if (company.isEmpty()) return null;
+        return new CompanyPresenter(company.get());
     }
 
     public List<CompanyPresenter> findBySession(UUID sessionId) {
@@ -72,6 +89,10 @@ public class CompanyService {
         String cnpj = new ValidateCNPJ(companyDTO.getCnpj()).isValidCNPJ().getCnpj();
         companyDTO.setCnpj(cnpj);
         CompanyModel companyModel = new CompanyModel(companyDTO);
+        SessionModel session = this.sessionService.findById(companyDTO.getSessionId());
+        companyModel.setSession(session);
+        CategoryModel category = this.categoryService.findOne(companyDTO.getCategoryId());
+        companyModel.setCategory(category);
         AddressModel address = this.addressService.findOne(companyDTO.getAddressId());
         companyModel.setAddress(address);
         UserModel user = this.userService.findById(companyDTO.getUserId());

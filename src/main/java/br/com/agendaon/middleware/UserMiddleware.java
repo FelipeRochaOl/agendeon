@@ -50,6 +50,7 @@ public class UserMiddleware extends OncePerRequestFilter {
         try {
             String jwt = authorization.substring(7);
             String userEmail = jwtService.extractUsername(jwt);
+            request.setAttribute("token", jwt);
 
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
@@ -88,6 +89,9 @@ public class UserMiddleware extends OncePerRequestFilter {
         ArrayList<String> routes = new ArrayList<>();
         routes.add("/auth/login");
         routes.add("/auth/signup");
+        routes.add("/session/list");
+        routes.add("/categories/list");
+        routes.add("/companies/list");
         routes.add("/");
         return routes;
     }

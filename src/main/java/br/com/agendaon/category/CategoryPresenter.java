@@ -13,7 +13,7 @@ public class CategoryPresenter {
     private String name;
     private String urlPath;
 
-    CategoryPresenter(CategoryModel categoryModel) {
+    public CategoryPresenter(CategoryModel categoryModel) {
         this.code = categoryModel.getCode();
         this.session = categoryModel.getSession();
         this.name = categoryModel.getName();

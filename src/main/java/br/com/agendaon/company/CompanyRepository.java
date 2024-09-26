@@ -5,13 +5,15 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
 public interface CompanyRepository extends JpaRepository<CompanyModel, UUID> {
     List<CompanyModel> findByCategoryCode(UUID categoryCode);
-
     List<CompanyModel> findBySessionCode(UUID sessionCode);
+
+    Optional<CompanyModel> findByUserId(UUID userId);
 
     @Query(value = "SELECT tac.*, taa.*"
             + " FROM T_AGON_COMPANY tac, T_AGON_ADDRESS taa"

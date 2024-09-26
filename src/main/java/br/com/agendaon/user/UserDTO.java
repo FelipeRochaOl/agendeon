@@ -10,6 +10,7 @@ public class UserDTO {
     private UUID id;
     private String email;
     private String password;
+    private Boolean isBusiness;
     private Date createdAt;
     private Boolean deleted;
 }

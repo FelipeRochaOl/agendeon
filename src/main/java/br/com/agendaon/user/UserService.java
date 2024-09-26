@@ -49,6 +49,7 @@ public class UserService {
         UserModel userModel = new UserModel();
         userModel.setEmail(user.getEmail());
         userModel.setPassword(encodedPassword);
+        userModel.setBusiness(user.getIsBusiness());
         UserModel newUser = this.userRepository.save(userModel);
         UserPresenter userPresenter = new UserPresenter();
         userPresenter.setEmail(newUser.getEmail());

@@ -9,6 +9,8 @@ import br.com.agendaon.service.ServiceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -28,8 +30,8 @@ public class ScheduleService {
     @Autowired
     private ServiceService serviceService;
 
-    public SchedulePresenter create(ScheduleDTO scheduleDTO) throws Exception {
-        ClientModel client = this.clientService.findOne(scheduleDTO.getClientId());
+    public SchedulePresenter create(ScheduleDTO scheduleDTO, UUID userId) throws Exception {
+        ClientModel client = this.clientService.findByUserId(userId);
         if (client == null) throw new Exception("Client not found");
         CompanyModel company = this.companyService.findOne(scheduleDTO.getCompanyId());
         if (company == null) throw new Exception("Company not found");
@@ -51,7 +53,11 @@ public class ScheduleService {
         ScheduleDTO scheduleDTO = new ScheduleDTO();
         scheduleDTO.setClientId(client.getId());
         scheduleDTO.setCompanyId(company.getId());
-        List<ScheduleModel> schedules = this.getValidSchedules(scheduleDTO);
+        List<ScheduleModel> schedulesFilter = this.scheduleRepository.findByCompanyIdAndClientId(
+                scheduleDTO.getCompanyId(),
+                scheduleDTO.getClientId()
+        );
+        List<ScheduleModel> schedules = this.getValidSchedules(schedulesFilter);
         List<SchedulePresenter> schedulePresenters = new ArrayList<>();
         for (ScheduleModel schedule : schedules) {
             SchedulePresenter schedulePresenter = new SchedulePresenter(schedule);
@@ -60,21 +66,39 @@ public class ScheduleService {
         return schedulePresenters;
     }
 
-    private List<ScheduleModel> getValidSchedules(ScheduleDTO scheduleDTO) throws Exception {
-        List<ScheduleModel> schedules = this.scheduleRepository.findByCompanyIdAndClientId(
-                scheduleDTO.getCompanyId(),
-                scheduleDTO.getClientId()
-        );
+    public List<SchedulePresenter> findByCompany(UUID companyId) throws Exception {
+        CompanyModel company = this.companyService.findOne(companyId);
+        if (company == null) throw new Exception("Company not found");
+        ScheduleDTO scheduleDTO = new ScheduleDTO();
+        scheduleDTO.setCompanyId(company.getId());
+        List<ScheduleModel> schedulesFilter = this.scheduleRepository.findByCompanyId(companyId);
+        List<ScheduleModel> schedules = this.getValidSchedules(schedulesFilter);
+        List<SchedulePresenter> schedulePresenters = new ArrayList<>();
+        for (ScheduleModel schedule : schedules) {
+            SchedulePresenter schedulePresenter = new SchedulePresenter(schedule);
+            schedulePresenters.add(schedulePresenter);
+        }
+        return schedulePresenters;
+    }
+
+    private List<ScheduleModel> getValidSchedules(List<ScheduleModel> schedules) {
         List<ScheduleModel> validSchedules = new ArrayList<>();
         for (ScheduleModel schedule : schedules) {
-            if (!schedule.getScheduleDate().after(new Date())) continue;
+            Date today = new Date();
+            LocalDate date = LocalDate.ofInstant(today.toInstant(), ZoneId.systemDefault());
+            LocalDate yesterday = date.minusDays(1);
+            Date checkDate = Date.from(yesterday.atStartOfDay(ZoneId.systemDefault()).toInstant());
+            if (!schedule.getScheduleDate().after(checkDate)) continue;
             validSchedules.add(schedule);
         }
         return validSchedules;
     }
 
-    public List<HistoryPresenter> findHistory(ScheduleDTO scheduleDTO) {
-        List<ScheduleModel> schedules = this.scheduleRepository.findByCompanyIdAndClientIdAndScheduleDateGreaterThanEqual(
+    public List<HistoryPresenter> findHistory(ScheduleDTO scheduleDTO, UUID userId) {
+        ClientModel client = this.clientService.findByUserId(userId);
+        if (client == null) return null;
+        scheduleDTO.setClientId(client.getId());
+        List<ScheduleModel> schedules = this.scheduleRepository.findHistory(
                 scheduleDTO.getCompanyId(),
                 scheduleDTO.getClientId(),
                 scheduleDTO.getScheduleDate()

@@ -6,6 +6,7 @@ import br.com.agendaon.service.ServicePresenter;
 import br.com.agendaon.utils.DateFormatter;
 import lombok.Data;
 
+import java.text.DecimalFormat;
 import java.util.Date;
 import java.util.UUID;
 
@@ -21,6 +22,7 @@ public class SchedulePresenter {
     private String formattedDate;
     private int hour;
     private int minute;
+    private String formattedTime;
     private Enum<StatusEnum> status;
 
     public SchedulePresenter(ScheduleModel scheduleModel) {
@@ -35,6 +37,7 @@ public class SchedulePresenter {
         this.setService(scheduleModel);
         this.setFormattedTotal();
         this.setFormattedDate();
+        this.setFormattedTime();
     }
 
     private void setCompany(ScheduleModel scheduleModel) {
@@ -55,5 +58,12 @@ public class SchedulePresenter {
 
     private void setFormattedDate() {
         this.formattedDate = DateFormatter.formatterDateWithoutTime(this.scheduleDate);
+    }
+
+    private void setFormattedTime() {
+        DecimalFormat formatHourAndMinutes = new DecimalFormat("00");
+        String hour = formatHourAndMinutes.format(this.hour);
+        String minute = formatHourAndMinutes.format(this.minute);
+        this.formattedTime = String.format("%s:%shs", hour, minute);
     }
 }

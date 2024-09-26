@@ -11,5 +11,7 @@ public class CompanyDTO {
     private String tradeName;
     private String cnpj;
     private UUID addressId;
+    private UUID sessionId;
+    private UUID categoryId;
     private UUID userId;
 }

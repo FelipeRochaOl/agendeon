@@ -25,6 +25,19 @@ public class CompanyController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
+    @GetMapping("/list")
+    public ResponseEntity<ResponsePresenter<List<CompanyPresenter>>> list() {
+        return this.findAll();
+    }
+
+    @GetMapping("/user")
+    public ResponseEntity<ResponsePresenter<CompanyPresenter>> findOneByUser(HttpServletRequest request) {
+        UserModel userModel = (UserModel) request.getAttribute("user");
+        CompanyPresenter company = this.companyService.findOneByUser(userModel.getId());
+        ResponsePresenter<CompanyPresenter> response = new ResponsePresenter<>(true, company);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
     @GetMapping("/{session}")
     public ResponseEntity<ResponsePresenter<List<CompanyPresenter>>> findBySession(@PathVariable("session") UUID sessionId) {
         List<CompanyPresenter> companies = this.companyService.findBySession(sessionId);
@@ -36,6 +49,13 @@ public class CompanyController {
     public ResponseEntity<ResponsePresenter<List<CompanyPresenter>>> findByCategory(@PathVariable("category") UUID categoryId) {
         List<CompanyPresenter> companies = this.companyService.findByCategory(categoryId);
         ResponsePresenter<List<CompanyPresenter>> response = new ResponsePresenter<>(true, companies);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ResponsePresenter<CompanyPresenter>> findById(@PathVariable("id") UUID id) {
+        CompanyPresenter company = this.companyService.findById(id);
+        ResponsePresenter<CompanyPresenter> response = new ResponsePresenter<>(true, company);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 

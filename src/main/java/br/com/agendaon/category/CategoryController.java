@@ -23,6 +23,11 @@ public class CategoryController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
+    @GetMapping("/list")
+    public ResponseEntity<ResponsePresenter<List<CategoryPresenter>>> list() {
+        return this.findAll();
+    }
+
     @PostMapping("/")
     public ResponseEntity<ResponsePresenter<CategoryPresenter>> create(@RequestBody CategoryDTO categoryDTO) {
         CategoryPresenter category = this.categoryService.create(categoryDTO);

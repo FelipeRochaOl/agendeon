@@ -2,6 +2,7 @@ package br.com.agendaon.user;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.SoftDelete;
 import org.springframework.security.core.GrantedAuthority;
@@ -25,6 +26,9 @@ public class UserModel implements UserDetails {
 
     @Column()
     private String password;
+
+    @ColumnDefault("false")
+    private boolean isBusiness;
 
     @CreationTimestamp
     private LocalDateTime createdAt;

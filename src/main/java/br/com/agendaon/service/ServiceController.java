@@ -16,9 +16,9 @@ public class ServiceController {
     @Autowired
     private ServiceService serviceService;
 
-    @GetMapping("/")
-    public ResponseEntity<ResponsePresenter<List<ServicePresenter>>> findAll() {
-        List<ServicePresenter> services = this.serviceService.findAll();
+    @GetMapping("/{company}")
+    public ResponseEntity<ResponsePresenter<List<ServicePresenter>>> findAll(@PathVariable UUID company) {
+        List<ServicePresenter> services = this.serviceService.findAll(company);
         ResponsePresenter<List<ServicePresenter>> response = new ResponsePresenter<>(true, services);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
