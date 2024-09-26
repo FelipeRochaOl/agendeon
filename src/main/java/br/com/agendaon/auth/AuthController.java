@@ -45,6 +45,8 @@ public class AuthController {
             UserDTO userDTO = new UserDTO();
             userDTO.setEmail(authDTO.getEmail());
             userDTO.setPassword(authDTO.getPassword());
+            userDTO.setIsBusiness(authDTO.getIsBusiness());
+            this.userService.createUser(userDTO);
             AuthPresenter auth = this.authService.authenticate(authDTO.getEmail(), authDTO.getPassword());
             ResponsePresenter<AuthPresenter> response = new ResponsePresenter<>(true, auth);
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
