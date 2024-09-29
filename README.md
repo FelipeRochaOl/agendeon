@@ -18,3 +18,5 @@ docker exec oracle19c ./setPassword.sh Minha_Nova_Senha
 
 Password: 1234
 DB: ORCLPDB1
+
+Restaurar a pasta oradata em backupOracle.zip em seu PC no local onde apontou a base do oracle no seu docker

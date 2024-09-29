@@ -11,7 +11,7 @@ public class SessionPresenter {
     private String name;
     private String urlPath;
 
-    SessionPresenter(SessionModel sessionModel) {
+    public SessionPresenter(SessionModel sessionModel) {
         this.code = sessionModel.getCode();
         this.name = sessionModel.getName();
         this.setUrlPath();

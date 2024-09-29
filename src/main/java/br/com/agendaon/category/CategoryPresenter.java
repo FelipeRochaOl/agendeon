@@ -1,6 +1,7 @@
 package br.com.agendaon.category;
 
 import br.com.agendaon.session.SessionModel;
+import br.com.agendaon.session.SessionPresenter;
 import lombok.Data;
 
 import java.text.Normalizer;
@@ -9,14 +10,14 @@ import java.util.UUID;
 @Data
 public class CategoryPresenter {
     private UUID code;
-    private SessionModel session;
+    private SessionPresenter session;
     private String name;
     private String urlPath;
 
     public CategoryPresenter(CategoryModel categoryModel) {
         this.code = categoryModel.getCode();
-        this.session = categoryModel.getSession();
         this.name = categoryModel.getName();
+        this.setSession(categoryModel.getSession());
         this.setUrlPath();
     }
 
@@ -27,5 +28,9 @@ public class CategoryPresenter {
 
     private String removeAccents(String str) {
         return Normalizer.normalize(str, Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "");
+    }
+
+    private void setSession(SessionModel session) {
+        this.session = new SessionPresenter(session);
     }
 }

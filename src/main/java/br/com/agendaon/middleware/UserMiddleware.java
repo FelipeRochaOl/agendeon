@@ -82,6 +82,8 @@ public class UserMiddleware extends OncePerRequestFilter {
 
     protected Boolean isOpenUrl(String url) {
         ArrayList<String> routes = this.openRoutes();
+        if (this.isEnabledRegexUrl("^\\/companies\\/[\\w-]+\\/[\\w-]+$", url)) return true;
+        if (this.isEnabledRegexUrl("^\\/companies\\/[\\w-]+$", url)) return true;
         return routes.contains(url);
     }
 
@@ -92,7 +94,12 @@ public class UserMiddleware extends OncePerRequestFilter {
         routes.add("/session/list");
         routes.add("/categories/list");
         routes.add("/companies/list");
+        routes.add("/companies/filter");
         routes.add("/");
         return routes;
+    }
+
+    protected boolean isEnabledRegexUrl(String regex, String url) {
+        return url.matches(regex);
     }
 }
