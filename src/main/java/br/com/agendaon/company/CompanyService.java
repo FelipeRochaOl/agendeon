@@ -64,12 +64,7 @@ public class CompanyService {
     }
 
     public List<CompanyPresenter> findByFilter(FilterDTO filter) {
-        List<CompanyModel> companies = this.companyRepository.filterCompany(
-                filter.getCategory(),
-                filter.getZip(),
-                filter.getCity(),
-                filter.getNeighborhood()
-        );
+        List<CompanyModel> companies = this.companyRepository.filterByCEP(filter.getZip());
         List<CompanyPresenter> result = new ArrayList<>();
         companies.forEach(company -> result.add(new CompanyPresenter(company)));
         return result;
